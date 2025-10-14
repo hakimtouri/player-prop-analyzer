@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, Cell } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
 import AltLineSlider from "./AltLineSlider";
 
 const PropAnalysis = ({ data }) => {
   const [selectedYear, setSelectedYear] = useState("2025");
-  const [altLine, setAltLine] = useState(81.0);
+  const [altLine, setAltLine] = useState(93.5);
 
+  // Mock data (replace with your own JSON later)
   const chartData = data.games.map((game, i) => ({
     name: game.opponent,
     value: game.yards,
@@ -20,10 +21,10 @@ const PropAnalysis = ({ data }) => {
   return (
     <div className="bg-white rounded-2xl shadow-sm p-6 mt-6">
       {/* Header */}
-      <div className="flex flex-wrap justify-between items-center mb-4 gap-4">
+      <div className="flex flex-wrap justify-between items-center mb-4">
         <div>
           <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            Prop Analysis
+            Prop Analysis <span className="text-gray-400 text-sm">ℹ️</span>
           </h2>
           <p className="text-gray-600 text-sm mt-1">
             The Over hit{" "}
@@ -53,48 +54,27 @@ const PropAnalysis = ({ data }) => {
       </div>
 
       {/* Chart */}
-      <div className="w-full h-72 mb-6">
+      <div className="w-full h-72 mb-4">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData}>
             <XAxis dataKey="name" tick={{ fill: "#555", fontSize: 12 }} />
-            <YAxis tick={{ fill: "#555", fontSize: 12 }} />
-            <Tooltip 
-              contentStyle={{ 
-                backgroundColor: '#fff',
-                border: '1px solid #e5e7eb',
-                borderRadius: '8px'
-              }}
-            />
-            <ReferenceLine 
-              y={altLine} 
-              stroke="#000" 
-              strokeWidth={2}
-              strokeDasharray="3 3"
-            />
+            <YAxis />
+            <Tooltip />
+            <ReferenceLine y={altLine} stroke="#000" strokeWidth={1.5} />
             <Bar
               dataKey="value"
+              fill="#22c55e"
               radius={[6, 6, 0, 0]}
               isAnimationActive={true}
-            >
-              {chartData.map((entry, index) => {
-                const isOver = entry.value > altLine;
-                return (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={isOver ? "#22c55e" : "#ef4444"}
-                    opacity={isOver ? 1 : 0.6}
-                  />
-                );
-              })}
-            </Bar>
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>
 
       {/* Stats + Slider */}
-      <div className="flex flex-wrap justify-between items-center border-t pt-4 gap-4">
-        <div className="text-sm text-gray-700">
-          <p className="mb-1">
+      <div className="flex flex-wrap justify-between items-center border-t pt-4 text-sm text-gray-700">
+        <div>
+          <p>
             <span className="font-semibold">Consensus Line:</span>{" "}
             {data.consensusLine}
           </p>
