@@ -1,22 +1,41 @@
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
-
-export default function PlayerChart({ data, altLine }) {
-  return (
-    <div className="bg-gray-900 text-white rounded-2xl p-6 shadow-lg">
-      <h2 className="text-xl font-semibold mb-4 text-center">
-        Bijan Robinson — Rush + Rec Yards
-      </h2>
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={data}>
-          <XAxis dataKey="game" tick={{ fill: "#ddd" }} />
-          <YAxis tick={{ fill: "#ddd" }} />
-          <Tooltip
-            contentStyle={{ backgroundColor: "#111", border: "none", color: "#fff" }}
-          />
-          <Bar dataKey="yards" fill="#60A5FA" radius={[6, 6, 0, 0]} />
-          <ReferenceLine y={altLine} stroke="#F87171" strokeDasharray="3 3" label={`Alt: ${altLine}`} />
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
-  );
-}
+import {
+    LineChart,
+    Line,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ResponsiveContainer,
+    ReferenceLine,
+  } from "recharts";
+  import data from "./bijan_robinson.json";
+  
+  export default function PlayerChart({ lineValue }) {
+    return (
+      <div className="w-full max-w-3xl h-80 bg-gray-800 rounded-2xl shadow-lg p-4">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={data}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+            <XAxis dataKey="game" stroke="#aaa" />
+            <YAxis stroke="#aaa" />
+            <Tooltip />
+            <Line type="monotone" dataKey="yards" stroke="#82ca9d" strokeWidth={2} />
+            {/* Dynamic reference line for slider */}
+            <ReferenceLine
+              y={lineValue}
+              stroke="#ff4b4b"
+              strokeDasharray="4 4"
+              strokeWidth={2}
+              label={{
+                value: `Line: ${lineValue}`,
+                position: "right",
+                fill: "#ff4b4b",
+                fontSize: 12,
+              }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    );
+  }
+  
