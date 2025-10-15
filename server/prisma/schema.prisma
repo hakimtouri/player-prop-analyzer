@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Player {
+  id        String   @id @default(uuid())
+  name      String
+  position  String
+  team      String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  games     Game[]
+  propLines PropLine[]
+
+  @@index([team])
+  @@index([position])
+}
+
+model Game {
+  id         String   @id @default(uuid())
+  playerId   String
+  opponent   String
+  isHome     Boolean  @default(true)
+  gameDate   DateTime
+  season     Int
+  week       Int
+  createdAt  DateTime @default(now())
+
+  player Player      @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  stats  PlayerStat?
+
+  @@index([playerId])
+  @@index([season])
+  @@index([gameDate])
+}
+
+model PlayerStat {
+  id             String  @id @default(uuid())
+  gameId         String  @unique
+  receivingYards Int     @default(0)
+  receptions     Int     @default(0)
+  receivingTDs   Int     @default(0)
+  rushingYards   Int     @default(0)
+  rushingTDs     Int     @default(0)
+  targets        Int     @default(0)
+
+  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  @@index([gameId])
+}
+
+model PropLine {
+  id         String   @id @default(uuid())
+  playerId   String
+  propType   String   // "receiving_yards", "receptions", "rushing_yards", etc.
+  line       Float
+  overOdds   Int      // e.g., -115
+  underOdds  Int      // e.g., -105
+  sportsbook String   // "Consensus", "DraftKings", etc.
+  gameDate   DateTime
+  createdAt  DateTime @default(now())
+
+  player Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@index([playerId])
+  @@index([propType])
+  @@index([gameDate])
+}
